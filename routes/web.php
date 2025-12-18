@@ -65,6 +65,16 @@ Route::patch('/blog/{post:slug}', function (Request $request, Post $post) {
     return back();
 });
 
+Route::post('/blog/images', function (Request $request) {
+    $request->validate([
+        'image' => ['required', 'image', 'max:2048'],
+    ]);
+
+    $path = $request->file('image')->store('blog', 'public');
+
+    return response()->json(['path' => Storage::url($path)]);
+});
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

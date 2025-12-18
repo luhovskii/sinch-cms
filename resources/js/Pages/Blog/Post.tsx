@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-// import { BlogPost } from "@/Pages/Blog";
 import MenuNavigation from "@/Components/MenuNavigation";
-import PostEditor from "@/Components/PostEditor";
+import PostEditorTinyMCE from "@/Components/PostEditorTinyMCE";
 import { useForm } from "@inertiajs/react";
 
 interface BlogPost {
@@ -24,7 +23,11 @@ const formatYMD = (date: string) => {
 
 const Post: React.FC<PostProps> = ({ post }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const { patch, setData, processing } = useForm({
+    const {
+        data,
+        patch,
+        setData,
+    } = useForm({
         content: post.content,
     });
 
@@ -41,9 +44,10 @@ const Post: React.FC<PostProps> = ({ post }) => {
                         {post.title}
                     </h2>
                     {isEditing ? (
-                        <PostEditor
-                            content={post.content}
+                        <PostEditorTinyMCE
+                            content={data.content}
                             onChange={(content) => setData('content', content)}
+                            editable={isEditing}
                         />
                     ): (
                         <div
@@ -79,7 +83,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default Post;
