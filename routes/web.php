@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Post;
+use Illuminate\Http\Request;
 
 
 //Route::get('/', function () {
@@ -30,8 +31,38 @@ Route::get('/blog', function () {
             'title',
             'excerpt',
             'published_at',
+            'slug'
         ])
     ]);
+});
+
+Route::get('/blog/{slug}', function (string $slug) {
+    $post = Post::published()
+        ->where('slug', $slug)
+        ->firstOrFail();
+
+    return Inertia::render("Blog/Post", [
+        'post' => [
+            'id' => $post->id,
+            'title' => $post->title,
+            'excerpt' => $post->excerpt,
+            'published_at' => $post->published_at,
+            'slug' => $post->slug,
+            'content' => $post->content,
+        ],
+    ]);
+});
+
+Route::patch('/blog/{post:slug}', function (Request $request, Post $post) {
+    $validated = $request->validate([
+        'content' => ['required', 'string'],
+    ]);
+
+    $post->update([
+        'content' => $validated['content']
+    ]);
+
+    return back();
 });
 
 Route::get('/dashboard', function () {

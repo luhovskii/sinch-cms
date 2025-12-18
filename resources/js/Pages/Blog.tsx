@@ -1,12 +1,13 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import MenuNavigation from "@/Components/MenuNavigation";
 
-interface BlogPost {
+export interface BlogPost {
     id: number;
     title: string;
     excerpt: string;
     published_at: string;
+    slug: string;
 }
 
 interface BlogProps {
@@ -43,13 +44,16 @@ const Blog: React.FC<BlogProps> = ({ posts }) => {
                                 className="bg-white rounded-2xl shadow p-6"
                             >
                                 <h2 className="text-xl font-semibold text-gray-900">
-                                    {post.title}
+                                    <Link
+                                        className="hover:underline"
+                                        href={`/blog/${post.slug}`}
+                                    >
+                                        {post.title}
+                                    </Link>
                                 </h2>
-
                                 <p className="text-gray-600 mt-2">
                                     {post.excerpt}
                                 </p>
-
                                 <time className="block text-sm text-gray-400 mt-4">
                                     {formatYMD(post.published_at)}
                                 </time>
