@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import MenuNavigation from "@/Components/MenuNavigation";
 import PostEditorTinyMCE from "@/Components/PostEditorTinyMCE";
+import FeatureImageUploader from "@/Components/FeatureImageUploader";
 import { useForm } from "@inertiajs/react";
 
 interface BlogPost {
@@ -11,6 +12,7 @@ interface BlogPost {
     excerpt: string;
     content: string;
     published_at: string;
+    feature_image: string;
 }
 
 interface PostProps {
@@ -29,6 +31,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         setData,
     } = useForm({
         content: post.content,
+        feature_image: post.feature_image
     });
 
     return (
@@ -37,12 +40,27 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
             <MenuNavigation />
 
-            <div className="w-full flex flex-col gap-4 justify-start items-center bg-gray-100 min-h-screen">
+            <div className="w-full flex flex-col gap-4 justify-start items-center bg-gray-100 min-h-screen mb-12">
                 <div className="container w-3/4 flex flex-col gap-4">
                     <Link href="/blog">&larr; Back to blog</Link>
                     <h2 className="text-lg font-bold text-gray-900">
                         {post.title}
                     </h2>
+
+
+                    {!isEditing && post.feature_image && (
+                        <img
+                            src={post.feature_image}
+                            alt={post.title}
+                            className="rounded-2xl mb-6 w-2/4 h-2/4"
+                        />
+                    )}
+
+                    {isEditing && (<FeatureImageUploader
+                        image={data.feature_image}
+                        onUploaded={(url) => setData('feature_image', url)}
+                    />)}
+
                     {isEditing ? (
                         <PostEditorTinyMCE
                             content={data.content}

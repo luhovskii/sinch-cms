@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 
 //Route::get('/', function () {
@@ -18,7 +19,19 @@ use Illuminate\Http\Request;
 //});
 
 Route::get('/', function () {
-    return Inertia::render("Home");
+    return Inertia::render("Home", [
+        'posts' => Post::published()
+        ->latest()
+        ->take(5)
+        ->get([
+            'id',
+            'title',
+            'excerpt',
+            'published_at',
+            'slug',
+            'feature_image',
+        ])
+    ]);
 });
 
 Route::get('/blog', function () {
@@ -31,7 +44,8 @@ Route::get('/blog', function () {
             'title',
             'excerpt',
             'published_at',
-            'slug'
+            'slug',
+            'feature_image',
         ])
     ]);
 });
@@ -49,6 +63,10 @@ Route::get('/blog/{slug}', function (string $slug) {
             'published_at' => $post->published_at,
             'slug' => $post->slug,
             'content' => $post->content,
+            'feature_image' => $post->feature_image,
+        ],
+        'can' => [
+            'edit' => auth()->user()?->can('update', $post) ?? false,
         ],
     ]);
 });
@@ -56,13 +74,29 @@ Route::get('/blog/{slug}', function (string $slug) {
 Route::patch('/blog/{post:slug}', function (Request $request, Post $post) {
     $validated = $request->validate([
         'content' => ['required', 'string'],
+        'feature_image' => ['nullable', 'string'],
     ]);
 
     $post->update([
-        'content' => $validated['content']
+        'content' => $validated['content'],
+        'feature_image' => $validated['feature_image'],
     ]);
 
     return back();
+});
+
+Route::post('/uploads/feature-image', function (Request $request) {
+    $request->validate([
+        'image' => ['required', 'image', 'max:4096'],
+    ]);
+
+    $path = $request
+        ->file('image')
+        ->store('uploads', 'public');
+
+    return response()->json([
+        'url' => Storage::url($path)
+    ]);
 });
 
 Route::post('/blog/images', function (Request $request) {

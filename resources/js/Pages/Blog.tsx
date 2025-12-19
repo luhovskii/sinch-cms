@@ -8,6 +8,7 @@ export interface BlogPost {
     excerpt: string;
     published_at: string;
     slug: string;
+    feature_image: string;
 }
 
 interface BlogProps {
@@ -43,6 +44,13 @@ const Blog: React.FC<BlogProps> = ({ posts }) => {
                                 key={post.id}
                                 className="bg-white rounded-2xl shadow p-6"
                             >
+                                {post.feature_image && (
+                                    <img
+                                        src={post.feature_image}
+                                        alt={post.title}
+                                        className="w-full h-48 object-cover rounded-xl mb-2"
+                                    />
+                                )}
                                 <h2 className="text-xl font-semibold text-gray-900">
                                     <Link
                                         className="hover:underline"

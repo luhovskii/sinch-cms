@@ -16,6 +16,7 @@ class Post extends Model
         'excerpt',
         'content',
         'published_at',
+        'feature_image',
     ];
 
     protected $casts = [
