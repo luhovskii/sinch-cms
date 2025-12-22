@@ -7,16 +7,7 @@ use Inertia\Inertia;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
-
-//Route::get('/', function () {
-//    return Inertia::render('Welcome', [
-//        'canLogin' => Route::has('login'),
-//        'canRegister' => Route::has('register'),
-//        'laravelVersion' => Application::VERSION,
-//        'phpVersion' => PHP_VERSION,
-//    ]);
-//});
+use App\Http\Controllers\PostController;
 
 Route::get('/', function () {
     return Inertia::render("Home", [
@@ -108,6 +99,8 @@ Route::post('/blog/images', function (Request $request) {
 
     return response()->json(['path' => Storage::url($path)]);
 });
+
+Route::resource('posts', PostController::class)->only(['update']);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
